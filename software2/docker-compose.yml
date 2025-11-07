@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:15
+    container_name: my_postgres
+    environment:
+      POSTGRES_DB: testdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
+
+  web:
+    build: ./web
+    container_name: web_app
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: db
+      DB_NAME: testdb
+      DB_USER: user
+      DB_PASS: password
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
